@@ -104,6 +104,7 @@
   if (vid) {
     if (matchMedia('(max-width: 720px)').matches && vid.dataset.posterM) vid.poster = vid.dataset.posterM;
     const setBtn = () => {
+      if (!vBtn) return;
       const paused = vid.paused;
       vBtn.classList.toggle('is-paused', paused);
       vBtn.setAttribute('aria-label', T(paused ? TX.vidPlay : TX.vidPause));
@@ -111,7 +112,7 @@
     const tryPlay = () => { const pr = vid.play(); if (pr && pr.catch) pr.catch(() => setBtn()); };
     if (RM.matches || (navigator.connection && navigator.connection.saveData)) { vid.removeAttribute('autoplay'); vid.pause(); userPaused = true; }
     vid.addEventListener('play', setBtn); vid.addEventListener('pause', setBtn);
-    vBtn.addEventListener('click', () => { if (vid.paused) { userPaused = false; tryPlay(); } else { userPaused = true; vid.pause(); } });
+    if (vBtn) vBtn.addEventListener('click', () => { if (vid.paused) { userPaused = false; tryPlay(); } else { userPaused = true; vid.pause(); } });
     // fuera de pantalla no gasta batería
     new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!userPaused) tryPlay(); } else vid.pause(); }, { threshold: 0.05 }).observe(vid);
     document.addEventListener('langchange', setBtn);
